@@ -27,7 +27,6 @@ form.addEventListener('submit', async (event) => {
     return;
   }
 
-  // Повний скид до дефолту при кожному новому сабміті
   currentPage = 1;
   clearGallery();
   hideLoadMoreButton();
@@ -47,7 +46,6 @@ form.addEventListener('submit', async (event) => {
 
     createGallery(data.hits);
 
-    // Логіка кінця колекції (якщо зображень мало і вони вмістилися на 1-у сторінку)
     const totalPages = Math.ceil(data.totalHits / perPage);
     if (currentPage >= totalPages) {
       hideLoadMoreButton();
@@ -67,12 +65,11 @@ form.addEventListener('submit', async (event) => {
   }
 });
 
-// Клік по кнопці "Load more"
 loadMoreBtn.addEventListener('click', async () => {
   currentPage += 1;
   
-  hideLoadMoreButton(); // Ховаємо кнопку на час запиту
-  showLoader(); // Індикатор завантаження під галереєю
+  hideLoadMoreButton();
+  showLoader();
 
   try {
     const data = await getImagesByQuery(currentQuery, currentPage);
@@ -80,26 +77,24 @@ loadMoreBtn.addEventListener('click', async () => {
 
     createGallery(data.hits);
 
-    // --- ПЛАВНИЙ СКРОЛ ЗА ТЗ МЕНТОРА ---
     const galleryItem = document.querySelector('.gallery-item');
     if (galleryItem) {
       const cardHeight = galleryItem.getBoundingClientRect().height;
       window.scrollBy({
-        top: cardHeight * 2, // Строго на дві висоти карточки галереї
+        top: cardHeight * 2,
         behavior: 'smooth',
       });
     }
 
-    // Перевірка на максимальну кількість сторінок
     const totalPages = Math.ceil(data.totalHits / perPage);
     if (currentPage >= totalPages) {
-      hideLoadMoreButton(); // Кнопка повністю зникає
+      hideLoadMoreButton();
       iziToast.info({
         message: "We're sorry, but you've reached the end of search results.",
         position: 'topRight'
       });
     } else {
-      showLoadMoreButton(); // Якщо є наступна сторінка — повертаємо кнопку
+      showLoadMoreButton();
     }
 
   } catch (error) {
